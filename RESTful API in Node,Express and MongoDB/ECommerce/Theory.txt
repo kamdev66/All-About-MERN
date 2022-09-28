@@ -1,0 +1,7 @@
+npm i express
+npm i mongoose
+npm i multer:- for uploading files
+npm i body-parser:-is se hum data ko easily get kar payenge,jaha se hamari api hit ho rhi hamari
+
+create public folder:- agar hum images,assets store krwana chahte hai apne server par
+npm i bcryptjs:- kyuki hame password hash me chahiye

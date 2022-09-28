@@ -1,0 +1,67 @@
+// hMOCEM9qluqRDIol
+
+
+------Connect database------ 
+const express = require('express')
+const mongoose=require('mongoose');
+
+const app=express();
+mongoose.connect('mongodb+srv://kamdev:hMOCEM9qluqRDIol@cluster0.rlabz7c.mongodb.net/mern-auth?retryWrites=true&w=majority')  //here, mern-auth is the Database name
+.then(()=>{
+    app.listen(5000);
+    console.log("Database is connected and listening on port 5000");
+})
+.catch((err)=>console.log(err));
+
+--------------
+Note:- we will not directly store the password in database, we will encrypt the password and then store it in the database
+for this, we will use bcryptjs library.
+
+const hashedPassword=bcrypt.hashSync(password);
+    const user=new User({
+        name:name,
+        email:email,
+        password:hashedPassword //yaha pr paaword ke place pr hashpassword store kr diya hai
+    });
+
+---------------------------------
+Authentication is done now, we need to authorize the user.after the log in we need to provide the user the access to use our app services.
+so, we can provide token to the user to access.it contains information abot user like :- email ,id etc.
+after some time,the token will expire .so,we have to re-generate the token to keep the user logged in.
+JWT:- is used for authorization .
+we will use jsonwebtoken:- npm i jsonwebtoken
+
+--------------
+Generating JWT Token for user:-
+After the password is correct,we will generate the token.
+const token=jwt.sign({id:existingUser._id},JWT_SECRET_KEY,{expiresIn:"1hr"})//first parameter is payload and 2nd paramter is secret key.secret key is not accessible by anyone except you.we will store secret key in environment variable.3rd parameter is expires condn. i.e, after how many days/time span ,the tokn will expire
+
+
+--------------
+Verifying JWT token and grant access:-
+we will crate new route where the user will ask for the permission
+const verifyToken=(req,res,next)=>{
+    const headers=req.headers[`authorization`];
+    const token=headers.split(" ")[1];
+    if(!token){
+        res.status(404).json({message:"No Token Found"});
+    }
+    //to verify the token,we have a function in jwt
+    jwt.verify(String(token),JWT_SECRET_KEY,(err,user)=>{  //we are converting token into string,here "user" is the decoded information
+    if(err){
+        res.status(400).json({message:"Invalid Token"})
+    }
+        console.log(user.id);
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
